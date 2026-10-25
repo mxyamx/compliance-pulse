@@ -1,0 +1,32 @@
+[
+  {
+    "user_id": "usr_9981",
+    "session_id": "ses_abc123",
+    "timestamp": "2026-10-25T22:32:05.333407",
+    "software_version": "2027.1.0",
+    "feature_code": "CAD_RENDER_3D",
+    "ip_address": "192.168.1.50",
+    "error_count": 0,
+    "cpu_usage_pct": 45.2
+  },
+  {
+    "user_id": "usr_4421",
+    "session_id": "ses_xyz987",
+    "timestamp": "2026-10-25T22:32:05.333431",
+    "software_version": "2026.4.2",
+    "feature_code": "LICENSE_CHECK",
+    "ip_address": "10.0.0.12",
+    "error_count": 3,
+    "cpu_usage_pct": 12.8
+  },
+  {
+    "user_id": "usr_bad_data",
+    "session_id": "ses_err000",
+    "timestamp": "2026-10-25T22:32:05.333442",
+    "software_version": "2027.1.0",
+    "feature_code": "UNKNOWN",
+    "ip_address": "invalid-ip",
+    "error_count": -5,
+    "cpu_usage_pct": 150.0
+  }
+]

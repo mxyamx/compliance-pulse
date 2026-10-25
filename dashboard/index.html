@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CompliancePulse Control Center</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & Babel via CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#0b0b0b] text-[#ffffff] font-sans antialiased min-h-screen p-6 md:p-10">
+
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function ComplianceDashboard() {
+      const [activeTab, setActiveTab] = useState('telemetry');
+      const [isSimulating, setIsSimulating] = useState(false);
+      const [driftDetected, setDriftDetected] = useState(false);
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [activeTab, driftDetected]);
+
+      const triggerSimulation = () => {
+        setIsSimulating(true);
+        setTimeout(() => {
+          setIsSimulating(false);
+          setDriftDetected(prev => !prev);
+        }, 1000);
+      };
+
+      return (
+        <div>
+          {/* Header */}
+          <header className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#222222] pb-6 mb-8 gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 bg-[#ffff00] rounded-sm inline-block"></span>
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">CompliancePulse Control Center</h1>
+              </div>
+              <p className="text-[#888888] text-sm mt-1">
+                Telemetry ETL Pipeline, Behavioral Feature Engineering & Observability Suite
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 bg-[#1a1a1a] border border-[#333333] text-xs font-mono rounded text-[#ffff00]">
+                ENV: PRODUCTION-SIM
+              </span>
+              <button 
+                onClick={triggerSimulation}
+                disabled={isSimulating}
+                className="bg-[#ffff00] text-[#0b0b0b] font-semibold px-4 py-2 rounded text-sm hover:opacity-90 transition cursor-pointer"
+              >
+                {isSimulating ? "Running Pipeline..." : "Trigger Simulation"}
+              </button>
+            </div>
+          </header>
+
+          {/* Navigation Tabs */}
+          <div className="flex border-b border-[#222222] mb-8 gap-8 text-sm font-medium">
+            <button
+              onClick={() => setActiveTab('telemetry')}
+              className={`pb-4 flex items-center gap-2 border-b-2 transition cursor-pointer ${
+                activeTab === 'telemetry' ? 'border-[#ffff00] text-[#ffff00]' : 'border-transparent text-[#888888] hover:text-[#ffffff]'
+              }`}
+            >
+              <i data-lucide="database" className="w-4 h-4"></i>
+              1. Telemetry Ingestion (ETL)
+            </button>
+            <button
+              onClick={() => setActiveTab('scoring')}
+              className={`pb-4 flex items-center gap-2 border-b-2 transition cursor-pointer ${
+                activeTab === 'scoring' ? 'border-[#ffff00] text-[#ffff00]' : 'border-transparent text-[#888888] hover:text-[#ffffff]'
+              }`}
+            >
+              <i data-lucide="cpu" className="w-4 h-4"></i>
+              2. Behavioral Scoring Models
+            </button>
+            <button
+              onClick={() => setActiveTab('monitor')}
+              className={`pb-4 flex items-center gap-2 border-b-2 transition cursor-pointer ${
+                activeTab === 'monitor' ? 'border-[#ffff00] text-[#ffff00]' : 'border-transparent text-[#888888] hover:text-[#ffffff]'
+              }`}
+            >
+              <i data-lucide="activity" className="w-4 h-4"></i>
+              3. Data Drift & Observability
+            </button>
+          </div>
+
+          {/* Main Grid Layout */}
+          <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Left Content Area */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {activeTab === 'telemetry' && (
+                <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
+                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="database" className="text-[#ffff00] w-5 h-5"></i>
+                    Raw Telemetry Stream & Pydantic Data Contracts
+                  </h2>
+                  <p className="text-sm text-[#888888] mb-4">
+                    Incoming operational payloads undergo strict schema validation (<code className="text-[#ffffff]">TelemetryRecord</code>). Malformed records with invalid CPU percentages or negative error metrics are automatically dropped.
+                  </p>
+                  
+                  <div className="bg-[#0b0b0b] border border-[#222222] rounded p-4 font-mono text-xs overflow-x-auto text-[#a0a0a0]">
+                    <div className="text-[#ffff00] mb-2"># ingest.py telemetry batch payload verification</div>
+                    <pre>{`[
+  {
+    "user_id": "usr_9981",
+    "session_id": "ses_abc123",
+    "software_version": "2027.1.0",
+    "feature_code": "CAD_RENDER_3D",
+    "error_count": 0,
+    "cpu_usage_pct": 45.2,
+    "status": "VALIDATED_PASSED"
+  },
+  {
+    "user_id": "usr_bad_data",
+    "error_count": -5,
+    "cpu_usage_pct": 150.0,
+    "status": "REJECTED_CONTRACT_VIOLATION"
+  }
+]`}</pre>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'scoring' && (
+                <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
+                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="cpu" className="text-[#ffff00] w-5 h-5"></i>
+                    Scikit-learn Isolation Forest Anomaly Scoring
+                  </h2>
+                  <p className="text-sm text-[#888888] mb-4">
+                    Engineered behavioral features (<code className="text-[#ffffff]">error_intensity</code>, rolling error frequencies) mapped against unsupervised models to classify compliance risks.
+                  </p>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm font-mono">
+                      <thead>
+                        <tr className="border-b border-[#222222] text-[#888888]">
+                          <th className="pb-3">USER_ID</th>
+                          <th className="pb-3">AVG CPU</th>
+                          <th className="pb-3">TOTAL ERRORS</th>
+                          <th className="pb-3">RISK SCORE</th>
+                          <th className="pb-3">STATUS</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#1a1a1a]">
+                        <tr>
+                          <td className="py-3">usr_9981</td>
+                          <td className="py-3">45.2%</td>
+                          <td className="py-3">0</td>
+                          <td className="py-3">0.00</td>
+                          <td className="py-3 text-emerald-400 font-semibold">COMPLIANT</td>
+                        </tr>
+                        <tr>
+                          <td className="py-3">usr_4421</td>
+                          <td className="py-3">12.8%</td>
+                          <td className="py-3">3</td>
+                          <td className="py-3">3.84</td>
+                          <td className="py-3 text-emerald-400 font-semibold">COMPLIANT</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'monitor' && (
+                <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
+                  <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <i data-lucide="activity" className="text-[#ffff00] w-5 h-5"></i>
+                    Pipeline Observability & Data Drift Guardrails
+                  </h2>
+                  <p className="text-sm text-[#888888] mb-4">
+                    Continuous monitoring of production baseline metrics. Triggers automated alerts when distribution shifts or error rates cross critical thresholds (&gt; 5.0).
+                  </p>
+
+                  <div className={`p-4 rounded border ${driftDetected ? 'bg-red-950/20 border-red-500/50' : 'bg-[#0b0b0b] border-[#222222]'}`}>
+                    <div className="flex items-center gap-3">
+                      <i data-lucide={driftDetected ? "alert-triangle" : "check-circle-2"} className={driftDetected ? "text-red-500 w-6 h-6" : "text-emerald-400 w-6 h-6"}></i>
+                      <div>
+                        <h3 className="font-semibold text-sm">
+                          {driftDetected ? "🚨 DRIFT ALERT: Mean error threshold exceeded!" : "✅ System Healthy: No data drift detected."}
+                        </h3>
+                        <p className="text-xs text-[#888888] mt-1">
+                          {driftDetected ? "Production telemetry batch shows abnormal error spikes (mean: 6.42). Action required." : "Current system error average is 1.50 across active worker nodes."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Right System Info Panel */}
+            <div className="space-y-6">
+              <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888888] mb-4">System Health</h3>
+                
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center pb-3 border-b border-[#1a1a1a]">
+                    <span className="text-sm text-[#888888]">Ingestion Engine</span>
+                    <span className="text-xs font-mono bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded">ONLINE</span>
+                  </div>
+                  <div className="flex justify-between items-center pb-3 border-b border-[#1a1a1a]">
+                    <span className="text-sm text-[#888888]">Model Version</span>
+                    <span className="text-xs font-mono text-[#ffffff]">v1.4.2-isolation</span>
+                  </div>
+                  <div className="flex justify-between items-center pb-3 border-b border-[#1a1a1a]">
+                    <span className="text-sm text-[#888888]">Storage Layer</span>
+                    <span className="text-xs font-mono text-[#ffff00]">Parquet / S3</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-[#888888]">Data Contracts</span>
+                    <span className="text-xs font-mono text-[#ffffff]">Enforced (Pydantic)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#121212] border border-[#222222] rounded-lg p-6">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#888888] mb-3">Architecture Highlights</h3>
+                <ul className="text-xs text-[#a0a0a0] space-y-2 list-disc pl-4">
+                  <li>Deterministic schema validation on raw drop-zones.</li>
+                  <li>Unsupervised scoring via Scikit-learn feature vectors.</li>
+                  <li>Automated drift regression checks.</li>
+                </ul>
+              </div>
+            </div>
+
+          </main>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<ComplianceDashboard />);
+  </script>
+</body>
+</html>
