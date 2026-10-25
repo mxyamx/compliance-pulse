@@ -1,6 +1,6 @@
 services:
   - type: static
-    env: static
     name: compliance-pulse
+    env: static
     buildCommand: ""
     publishPath: dashboard
